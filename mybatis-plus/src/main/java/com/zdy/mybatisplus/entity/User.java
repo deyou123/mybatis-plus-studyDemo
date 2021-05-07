@@ -1,6 +1,8 @@
 package com.zdy.mybatisplus.entity;
 
 import java.io.Serializable;
+
+import com.baomidou.mybatisplus.annotation.TableId;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -21,6 +23,7 @@ import lombok.EqualsAndHashCode;
       /**
      * 主键ID
      */
+
         private Long id;
 
       /**

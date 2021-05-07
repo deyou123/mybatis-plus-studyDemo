@@ -1,3 +1,5 @@
+server:
+  port: 8081
 spring:
   #配置数据库
   datasource:

@@ -240,3 +240,115 @@ public class UserController {
 页面显示结果如下
 
 ![image-20210223141038765](C:\Users\zhaid\AppData\Roaming\Typora\typora-user-images\image-20210223141038765.png)
+
+# 常用注解
+
+
+
+@TableName 映射表和类
+
+@TabbleId   映射主键
+
+```html
+AUTO(0)			数据库自增
+NONE(1)			默认，不设置，开发者赋值则使用开发者给的值，否则生成随机数
+INPUT(2)		insert之前需要手动赋值
+ASSIGN_ID(3)	使用雪花算法生成唯一值，可以是数字类型或字符串类型
+ASSIGN_UUID(4)  使用雪花算法生成唯一值，只能是字符串类型
+```
+
+@TableField
+
+```html
+数据库表不一致时使用
+```
+
+# 字段自动填充功能实现
+
+查询数据库的时候不会查询 title 字段，实体类和数据表字段不一致的时候使用
+
+fill 自动填充
+
+```java
+@TableField(fill = FieldFill.INSERT)
+private Date createTime;  
+@TableField(fill = FieldFill.INSERT_UPDATE)
+private Date updateTime;
+```
+
+添加自动填充处理器
+
+```java
+package com.southwind.handler;
+
+import com.baomidou.mybatisplus.core.handlers.MetaObjectHandler;
+import org.apache.ibatis.reflection.MetaObject;
+import org.springframework.stereotype.Component;
+
+import java.util.Date;
+
+@Component
+public class MyMetaDataHandler implements MetaObjectHandler {
+    @Override
+    public void insertFill(MetaObject metaObject) {
+        this.setFieldValByName("createTime", new Date(), metaObject);
+        this.setFieldValByName("updateTime", new Date(),metaObject );
+    }
+
+    @Override
+    public void updateFill(MetaObject metaObject) {
+        this.setFieldValByName("updateTime", new Date(), metaObject);
+    }
+}
+```
+
+> # 分页查询
+
+功能：查询名字为Sandy 的数据，显示第二页，页面数据3
+
+注入拦截器
+
+```java
+@Configuration
+public class PageConfig {
+
+    // 最新版
+    @Bean
+    public MybatisPlusInterceptor mybatisPlusInterceptor() {
+        MybatisPlusInterceptor interceptor = new MybatisPlusInterceptor();
+        interceptor.addInnerInterceptor(new PaginationInnerInterceptor(DbType.MYSQL ));
+        return interceptor;
+    }
+}
+
+@Mapper
+public interface UserMapper extends BaseMapper<User> {
+
+    /*自定义分页接口*/
+	
+    /***
+     *
+     * @param page  分页对象
+     * @param name 状态
+     * @return 返回分页对象
+     */
+    @Select( "SELECT * FROM user WHERE name=#{name}")
+    IPage<User> selectPage(Page<?> page, String name);
+}
+
+```
+
+```java
+//测试分页功能
+@Test
+void page(){
+    Page<User> page = new Page<>(2,3);
+    IPage<User> userIPage = userMapper.selectPage(page, "Sandy");
+    userIPage.getRecords().forEach(System.out::println);
+}
+```
+
+
+
+
+

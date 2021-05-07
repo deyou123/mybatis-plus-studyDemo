@@ -8,6 +8,8 @@ import com.baomidou.mybatisplus.generator.config.PackageConfig;
 import com.baomidou.mybatisplus.generator.config.StrategyConfig;
 
 import com.baomidou.mybatisplus.generator.config.rules.NamingStrategy;
+import com.baomidou.mybatisplus.generator.engine.BeetlTemplateEngine;
+import com.baomidou.mybatisplus.generator.engine.FreemarkerTemplateEngine;
 
 
 public class Main {
@@ -46,6 +48,10 @@ public class Main {
         strategyConfig.setEntityLombokModel(true);
         strategyConfig.setNaming(NamingStrategy.underline_to_camel);
         strategyConfig.setColumnNaming(NamingStrategy.underline_to_camel);
+
+        //自定义模板引擎
+       // autoGenerator.setTemplateEngine(new FreemarkerTemplateEngine());
+       // autoGenerator.setTemplateEngine(new BeetlTemplateEngine());
 
         autoGenerator.setPackageInfo(packageConfig);
         autoGenerator.setDataSource(dataSourceConfig);
